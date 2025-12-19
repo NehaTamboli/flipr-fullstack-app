@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-// ===== Healthcheck Endpoint (must be before catch-all) =====
+// ===== Healthcheck Endpoint (first) =====
 app.get("/healthz", (req, res) => res.send("OK"));
 
 // ===== API Routes =====
@@ -22,8 +22,8 @@ app.use("/api/subscribers", require("./routes/subscriberRoutes"));
 
 // ===== MongoDB Connection =====
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB Connected ✅"))
-    .catch(err => console.log("MongoDB connection error ❌", err));
+  .then(() => console.log("MongoDB Connected ✅"))
+  .catch(err => console.log("MongoDB connection error ❌", err));
 
 // ===== Serve Frontend =====
 const frontendPath = path.join(__dirname, "../frontend/landing");
@@ -31,7 +31,7 @@ app.use(express.static(frontendPath));
 
 // ===== Catch-all route (after APIs & healthcheck) =====
 app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // ===== Start Server =====
