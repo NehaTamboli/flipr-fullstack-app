@@ -1,9 +1,11 @@
+// models/Project.js
 const mongoose = require("mongoose");
 
-const ProjectSchema = new mongoose.Schema({
-  image: String,
-  name: String,
-  description: String
+const projectSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  description: String,
+  client: String,
+  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model("Project", ProjectSchema);
+module.exports = mongoose.model("Project", projectSchema);

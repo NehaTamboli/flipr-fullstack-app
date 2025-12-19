@@ -1,18 +1,26 @@
 const express = require("express");
 const router = express.Router();
-const Project = require("../models/Project");
+const Project = require("../models/Project"); // make sure Project.js exists
 
-// Add project (Admin)
+// POST → Add project
 router.post("/", async (req, res) => {
-  const project = new Project(req.body);
-  await project.save();
-  res.json(project);
+  try {
+    const project = new Project(req.body);
+    await project.save();
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Get projects (Landing Page)
+// GET → Get all projects
 router.get("/", async (req, res) => {
-  const projects = await Project.find();
-  res.json(projects);
+  try {
+    const projects = await Project.find();
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
