@@ -11,6 +11,9 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads")); // Keep uploads accessible
 
+// ===== Healthcheck Endpoint (important for Railway) =====
+app.get("/healthz", (req, res) => res.send("OK"));
+
 // ===== API Routes =====
 app.use("/api/projects", require("./routes/projectRoutes"));
 app.use("/api/clients", require("./routes/clientRoutes"));
@@ -26,7 +29,7 @@ mongoose.connect(process.env.MONGO_URI)
 const frontendPath = path.join(__dirname, "../frontend/landing");
 app.use(express.static(frontendPath));
 
-// Catch-all route to serve index.html for frontend
+// ===== Catch-all route (after all APIs and healthcheck) =====
 app.get("*", (req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
 });
