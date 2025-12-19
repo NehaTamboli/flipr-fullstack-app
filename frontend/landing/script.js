@@ -1,131 +1,33 @@
-// ==========================
-// Landing Page Script
-// ==========================
+// ===== Backend API Base URL =====
+const API_BASE_URL = "https://flipr-fullstack-app-production.up.railway.app/api";
 
-// Set your backend URL to Railway deployment
-const BASE_URL = "https://flipr-fullstack-app-production.up.railway.app";
-
-// ==========================
-// PROJECTS SECTION
-// ==========================
-async function loadProjects() {
-  try {
-    const res = await fetch(`${BASE_URL}/api/projects`);
-    const data = await res.json();
-
-    const div = document.getElementById("projects");
-    div.innerHTML = ""; // Clear previous content
-
-    data.forEach(p => {
-      div.innerHTML += `
-        <div class="card">
-          <img src="${BASE_URL}/uploads/${p.image}" alt="${p.name}">
-          <h3>${p.name}</h3>
-          <p>${p.description}</p>
-          <button>Read More</button>
-        </div>
-      `;
-    });
-  } catch (error) {
-    console.error("Error loading projects:", error);
-    document.getElementById("projects").innerHTML = "<p>Failed to load projects.</p>";
-  }
-}
-
-// ==========================
-// CLIENTS SECTION
-// ==========================
-async function loadClients() {
-  try {
-    const res = await fetch(`${BASE_URL}/api/clients`);
-    const data = await res.json();
-
-    const div = document.getElementById("clients");
-    div.innerHTML = "";
-
-    data.forEach(c => {
-      div.innerHTML += `
-        <div class="card">
-          <img src="${BASE_URL}/uploads/${c.image}" alt="${c.name}">
-          <p>${c.description}</p>
-          <strong>${c.name}</strong><br>
-          <small>${c.designation}</small>
-        </div>
-      `;
-    });
-  } catch (error) {
-    console.error("Error loading clients:", error);
-    document.getElementById("clients").innerHTML = "<p>Failed to load clients.</p>";
-  }
-}
-
-// ==========================
-// CONTACT FORM SUBMISSION
-// ==========================
-document.getElementById("contactForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const fullName = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const mobile = document.getElementById("mobile").value.trim();
-  const city = document.getElementById("city").value.trim();
-
-  if (!fullName || !email || !mobile || !city) {
-    return alert("Please fill all fields.");
-  }
-
-  try {
-    const res = await fetch(`${BASE_URL}/api/contacts`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName, email, mobile, city })
-    });
-
-    if (res.ok) {
-      alert("Contact submitted successfully!");
-      document.getElementById("contactForm").reset();
-    } else {
-      alert("Failed to submit contact. Try again.");
+// ===== Utility function to fetch and log data =====
+async function fetchData(endpoint, label) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        console.log(`${label}:`, data);
+    } catch (err) {
+        console.error(`Error fetching ${label}:`, err);
     }
-  } catch (error) {
-    console.error("Contact form error:", error);
-    alert("Error submitting contact form.");
-  }
-});
-
-// ==========================
-// NEWSLETTER SUBSCRIPTION
-// ==========================
-document.getElementById("subscribeBtn").addEventListener("click", async () => {
-  const emailVal = document.getElementById("newsletterEmail").value.trim();
-
-  if (!emailVal) return alert("Enter a valid email");
-
-  try {
-    const res = await fetch(`${BASE_URL}/api/subscribers`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: emailVal })
-    });
-
-    if (res.ok) {
-      alert("Subscribed successfully!");
-      document.getElementById("newsletterEmail").value = "";
-    } else {
-      alert("Failed to subscribe. Try again.");
-    }
-  } catch (error) {
-    console.error("Newsletter subscription error:", error);
-    alert("Error subscribing to newsletter.");
-  }
-});
-
-// ==========================
-// INIT FUNCTION
-// ==========================
-function initLandingPage() {
-  loadProjects();
-  loadClients();
 }
 
-window.addEventListener("DOMContentLoaded", initLandingPage);
+// ===== Fetch all APIs =====
+fetchData("projects", "Projects");
+fetchData("clients", "Clients");
+fetchData("contacts", "Contacts");
+fetchData("subscribers", "Subscribers");
+
+// ===== Optional: Display on the page =====
+function displayDataOnPage(label, data) {
+    const container = document.createElement("div");
+    container.innerHTML = `<h3>${label}</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+    document.body.appendChild(container);
+}
+
+// Example: Fetch projects and display on page
+fetch(`${API_BASE_URL}/projects`)
+    .then(res => res.json())
+    .then(data => displayDataOnPage("Projects", data))
+    .catch(err => console.error(err));
