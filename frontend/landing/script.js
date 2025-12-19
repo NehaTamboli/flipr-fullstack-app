@@ -3,7 +3,8 @@
 // ==========================
 
 // Set your backend URL (keep localhost for now)
-const BASE_URL = "http://localhost:5000"; // no change
+const BASE_URL = "https://flipr-fullstack-app-production.up.railway.app";
+
 
 // ==========================
 // PROJECTS SECTION
