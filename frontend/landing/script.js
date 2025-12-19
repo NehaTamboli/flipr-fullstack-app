@@ -2,9 +2,8 @@
 // Landing Page Script
 // ==========================
 
-// Set your backend URL (keep localhost for now)
+// Set your backend URL to Railway deployment
 const BASE_URL = "https://flipr-fullstack-app-production.up.railway.app";
-
 
 // ==========================
 // PROJECTS SECTION
@@ -18,7 +17,6 @@ async function loadProjects() {
     div.innerHTML = ""; // Clear previous content
 
     data.forEach(p => {
-      // Ensure filenames in uploads folder match exactly (no spaces)
       div.innerHTML += `
         <div class="card">
           <img src="${BASE_URL}/uploads/${p.image}" alt="${p.name}">
@@ -43,10 +41,9 @@ async function loadClients() {
     const data = await res.json();
 
     const div = document.getElementById("clients");
-    div.innerHTML = ""; // Clear previous content
+    div.innerHTML = "";
 
     data.forEach(c => {
-      // Ensure filenames in uploads folder match exactly (no spaces)
       div.innerHTML += `
         <div class="card">
           <img src="${BASE_URL}/uploads/${c.image}" alt="${c.name}">
@@ -131,5 +128,4 @@ function initLandingPage() {
   loadClients();
 }
 
-// Call init on page load
 window.addEventListener("DOMContentLoaded", initLandingPage);
