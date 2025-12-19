@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-// ===== Root & Healthcheck =====
+// ===== Root & Healthcheck Routes =====
 app.get("/", (req, res) => res.send("Backend is live!"));
 app.get("/healthz", (req, res) => res.send("OK"));
 
@@ -23,9 +23,19 @@ app.use("/api/contacts", require("./routes/contactRoutes"));
 app.use("/api/subscribers", require("./routes/subscriberRoutes"));
 
 // ===== MongoDB Connection =====
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected ✅"))
-  .catch(err => console.error("MongoDB connection error ❌", err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI); // URL-encoded password in .env
+    console.log("MongoDB Connected ✅");
 
-// ===== Start Server =====
-app.listen(PORT, () => console.log(`Server running on port ${PORT} ✅`));
+    // Start server only after DB connection
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT} ✅`);
+    });
+  } catch (err) {
+    console.error("MongoDB connection error ❌", err);
+    setTimeout(connectDB, 5000); // Retry after 5s if failed
+  }
+};
+
+connectDB();
