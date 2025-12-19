@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -11,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-// ===== Healthcheck Endpoint (first) =====
+// ===== Healthcheck =====
 app.get("/healthz", (req, res) => res.send("OK"));
 
 // ===== API Routes =====
@@ -20,19 +19,13 @@ app.use("/api/clients", require("./routes/clientRoutes"));
 app.use("/api/contacts", require("./routes/contactRoutes"));
 app.use("/api/subscribers", require("./routes/subscriberRoutes"));
 
-// ===== MongoDB Connection =====
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected ✅"))
-  .catch(err => console.log("MongoDB connection error ❌", err));
-
-// ===== Serve Frontend =====
-const frontendPath = path.join(__dirname, "../frontend/landing");
-app.use(express.static(frontendPath));
-
-// ===== Catch-all route (after APIs & healthcheck) =====
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
+// ===== MongoDB Connection (non-blocking) =====
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("MongoDB Connected ✅"))
+.catch(err => console.log("MongoDB connection error ❌", err));
 
 // ===== Start Server =====
 const PORT = process.env.PORT || 5000;
