@@ -1,6 +1,7 @@
 // ===== Backend API Base URL =====
 const API_BASE_URL = "https://flipr-fullstack-app-production.up.railway.app/api";
 
+
 // ===== Utility function to fetch and log data =====
 async function fetchData(endpoint, label) {
     try {
@@ -31,3 +32,4 @@ fetch(`${API_BASE_URL}/projects`)
     .then(res => res.json())
     .then(data => displayDataOnPage("Projects", data))
     .catch(err => console.error(err));
+
